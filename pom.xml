@@ -51,7 +51,7 @@
         </dependency>
         <!-- OpenCV -->
         <dependency>
-            <groupId>org.openpnp</groupId>
+            <groupId>org.opencv</groupId>
             <artifactId>opencv</artifactId>
             <version>4.10.0-0</version>
         </dependency>
