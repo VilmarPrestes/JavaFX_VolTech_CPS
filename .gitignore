@@ -36,3 +36,6 @@ build/
 
 ### Mac OS ###
 .DS_Store
+
+opencv_java4100.dll
+opencv_videoio_ffmpeg4100_64.dllse
