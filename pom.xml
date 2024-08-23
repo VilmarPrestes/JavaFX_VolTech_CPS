@@ -51,10 +51,10 @@
         </dependency>
         <!-- OpenCV -->
         <dependency>
-            <groupId>org.opencv</groupId>
-            <artifactId>opencv</artifactId>
-            <version>4.10.0-0</version>
-        </dependency>
+			<groupId>org.opencv</groupId>
+			<artifactId>opencv</artifactId>
+			<version>4.10.0</version>
+		</dependency>
     </dependencies>
 
     <build>
