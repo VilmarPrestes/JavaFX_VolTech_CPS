@@ -7,8 +7,7 @@
 
     opens com.javafx_voltech_cps.cameramonitoringapp to javafx.fxml;
     exports com.javafx_voltech_cps.cameramonitoringapp;
-    exports com.javafx_voltech_cps.cameramonitoringapp.controller;
-    opens com.javafx_voltech_cps.cameramonitoringapp.controller to javafx.fxml;
     exports com.javafx_voltech_cps.cameramonitoringapp.model.entity;
-    opens com.javafx_voltech_cps.cameramonitoringapp.model.entity to javafx.fxml;
+    exports com.javafx_voltech_cps.cameramonitoringapp.view.custom_elements;
+    opens com.javafx_voltech_cps.cameramonitoringapp.view.custom_elements to javafx.fxml;
 }
