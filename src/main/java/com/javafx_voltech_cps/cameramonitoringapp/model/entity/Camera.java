@@ -1,11 +1,6 @@
 package com.javafx_voltech_cps.cameramonitoringapp.model.entity;
 
-import jakarta.persistence.Column;
-import jakarta.persistence.Entity;
-import jakarta.persistence.GeneratedValue;
-import jakarta.persistence.GenerationType;
-import jakarta.persistence.Id;
-import jakarta.persistence.Table;
+import jakarta.persistence.*;
 
 @Entity
 @Table(name = "cameras")
@@ -19,6 +14,10 @@ public class Camera {
 
     @Column(name = "ip_address", nullable = false)
     private String ipAddress;
+
+    @ManyToOne
+    @JoinColumn(name = "recorder_id", nullable = false)
+    private Recorder recorder;
 
     // Getters and Setters
     public Long getId() {

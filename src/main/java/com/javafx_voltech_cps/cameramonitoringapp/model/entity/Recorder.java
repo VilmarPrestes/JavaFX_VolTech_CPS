@@ -45,7 +45,7 @@ public class Recorder {
     @Column(name = "number_of_channels", nullable = false)
     private int numberOfChannels;
 
-    @OneToMany(mappedBy = "recorder", cascade = CascadeType.ALL)
+    @OneToMany(mappedBy = "recorder", cascade = CascadeType.ALL, orphanRemoval = true)
     private List<Camera> cameras;
 
     // Getters and Setters
