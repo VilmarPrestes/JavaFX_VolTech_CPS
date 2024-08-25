@@ -2,10 +2,13 @@ package com.javafx_voltech_cps.cameramonitoringapp.view.custom_elements;
 
 import java.util.Objects;
 import java.util.concurrent.Executors;
+import java.util.concurrent.Future;
 import java.util.concurrent.ScheduledExecutorService;
 import java.util.concurrent.TimeUnit;
 
+import javafx.application.Platform;
 import org.opencv.core.Mat;
+import org.opencv.imgproc.Imgproc;
 import org.opencv.videoio.VideoCapture;
 
 import com.javafx_voltech_cps.cameramonitoringapp.model.entity.Camera;
@@ -44,25 +47,24 @@ public class CamView extends Service<Void> {
         isOpen = false;
         view = new ImageView();
         videoState = STOP;
-        try{
+        try {
             this.notFoundImage = new Image(Objects.requireNonNull(getClass().getResourceAsStream(NOT_FOUND_VIDEO)));
             this.stopVideoImage = new Image(Objects.requireNonNull(getClass().getResourceAsStream(STOP_VIDEO)));
             this.findingVideoImage = new Image(Objects.requireNonNull(getClass().getResourceAsStream(FINDING_VIDEO)));
-
+            camera = new Camera();
+            camera.setSource("C:\\Users\\eduar\\OneDrive\\Imagens\\Velkoz.jpeg");
             System.out.println("TESTADO");
             view.setImage(stopVideoImage);
-        }
-        catch(Exception e){
+        } catch (Exception e) {
             messageError(e);
         }
     }
 
     public void setCamera(Camera camera) throws Exception {
         this.camera = camera;
-        view.setImage(findingVideoImage);
-        if (isOpen) {
-            capture.release();
-            view.setImage(notFoundImage);
+        if (videoState == PLAY) {
+            stop();
+            play();
         }
     }
 
@@ -70,6 +72,7 @@ public class CamView extends Service<Void> {
         if (videoState != STOP || isRunning()) {
             videoState = STOP;
             cancel();
+            capture.release();
             view.setImage(stopVideoImage);
         }
     }
@@ -97,34 +100,47 @@ public class CamView extends Service<Void> {
             @Override
             protected Void call() {
                 try {
-                    if (isOpen) {
-                        capture.release();
-                        isOpen = false;
-                    }
-                    try (ScheduledExecutorService scheduler = Executors.newSingleThreadScheduledExecutor()) {
-                        scheduler.schedule(() -> {
-                            if (!isOpen) {
+                    while (true) {
+                        if (videoState == PLAY) {
+                            if (isOpen) {
                                 capture.release();
-                                view.setImage(notFoundImage);
-                            }
-                            scheduler.shutdown();
-                        }, TIMEOUT_SECONDS, TimeUnit.SECONDS);
-                    }
-                    isOpen = capture.open(camera.getSource());
-                    try (ScheduledExecutorService scheduler = Executors.newSingleThreadScheduledExecutor()) {
-                        while ((videoState == PAUSE || videoState == PLAY) && isOpen) {
-                            scheduler.schedule(() -> {
                                 isOpen = false;
-                                view.setImage(notFoundImage);
-                            }, TIMEOUT_SECONDS, TimeUnit.SECONDS);
-                            if (videoState != PLAY || !loadFrame()) {
-                                scheduler.shutdown();  // Encerrar o scheduler se o frame foi carregado com sucesso
-                                break;  // Sai do loop, pois o frame foi carregado
                             }
-                            wait(1000 / fps);  // Aguardando a taxa de frames por segundo
+                            capture = new VideoCapture();
+                            ScheduledExecutorService scheduler = Executors.newSingleThreadScheduledExecutor();
+                            scheduler.schedule(() -> {
+                                if (!isOpen) {
+                                    Platform.runLater(() -> view.setImage(findingVideoImage));
+                                    capture.release();
+                                }
+                            }, TIMEOUT_SECONDS, TimeUnit.SECONDS);
+                            isOpen = capture.open(camera.getSource());
+                            if (isOpen) {
+                                // Primeiramente, cancela qualquer tarefa pendente
+                                if (scheduler != null && !scheduler.isShutdown()) {
+                                    scheduler.shutdownNow();
+                                }
+                                scheduler = Executors.newSingleThreadScheduledExecutor();
+                                while ((videoState == PAUSE || videoState == PLAY)) {
+                                    Future<?> timeoutTask = scheduler.schedule(() -> {
+                                        isOpen = false;
+                                        view.setImage(notFoundImage);
+                                    }, TIMEOUT_SECONDS, TimeUnit.SECONDS);
+                                    if (videoState == PLAY) {
+                                        if (!loadFrame()) {
+                                            break;
+                                        } else {
+                                            timeoutTask.cancel(true);
+                                        }
+                                    } else {
+                                        scheduler.shutdownNow();
+                                    }
+                                }
+                                scheduler.shutdown();
+                            }
+                            capture.release();
                         }
                     }
-                    capture.release();
                 } catch (Exception e) {
                     messageError(e);
                 }
@@ -136,12 +152,15 @@ public class CamView extends Service<Void> {
     private boolean loadFrame() throws Exception {
         Mat frame = new Mat();
         if (capture.read(frame)) {
-            if (frame.empty()) {
-                return false;
+            if (videoState == PLAY) {
+                if (frame.empty()) {
+                    return false;
+                }
+                Mat rgbImage = new Mat();
+                Imgproc.cvtColor(frame, rgbImage, Imgproc.COLOR_BGR2RGB);
+                Image image = matToImage(rgbImage);
+                Platform.runLater(() -> view.setImage(image));
             }
-            Mat rgbImage = new Mat();
-            Image image = matToImage(rgbImage);
-            view.setImage(image);
             return true;
         }
         return false;
@@ -151,24 +170,43 @@ public class CamView extends Service<Void> {
         if (mat.empty()) {
             throw new IllegalArgumentException("The Mat is empty");
         }
+
         int width = mat.cols();
         int height = mat.rows();
         WritableImage writableImage = new WritableImage(width, height);
-        byte[] data = new byte[width * height * (int) mat.elemSize()];
-        mat.get(0, 0, data);
         PixelWriter pixelWriter = writableImage.getPixelWriter();
-        for (int y = 0; y < height; y++) {
-            for (int x = 0; x < width; x++) {
-                int index = (y * width + x) * (int) mat.elemSize();
-                byte b = data[index];
-                byte g = data[index + 1];
-                byte r = data[index + 2];
-                Color color = Color.rgb((r & 0xFF), (g & 0xFF), (b & 0xFF));
-                pixelWriter.setColor(x, y, color);
+
+        if (mat.channels() == 1) { // Escala de cinza
+            byte[] data = new byte[width * height];
+            mat.get(0, 0, data);
+            for (int y = 0; y < height; y++) {
+                for (int x = 0; x < width; x++) {
+                    int index = y * width + x;
+                    byte value = data[index];
+                    Color color = Color.gray((value & 0xFF) / 255.0);
+                    pixelWriter.setColor(x, y, color);
+                }
             }
+        } else if (mat.channels() == 3) { // RGB
+            byte[] data = new byte[width * height * 3];
+            mat.get(0, 0, data);
+            for (int y = 0; y < height; y++) {
+                for (int x = 0; x < width; x++) {
+                    int index = (y * width + x) * 3;
+                    byte r = data[index];
+                    byte g = data[index + 1];
+                    byte b = data[index + 2];
+                    Color color = Color.rgb((r & 0xFF), (g & 0xFF), (b & 0xFF));
+                    pixelWriter.setColor(x, y, color);
+                }
+            }
+        } else {
+            throw new IllegalArgumentException("Unsupported number of channels: " + mat.channels());
         }
+
         return writableImage;
     }
+
 
     public void messageError(Exception e) {
         e.printStackTrace();
