@@ -3,9 +3,12 @@
     requires javafx.fxml;
 	requires java.desktop;
 	requires opencv;
+        requires java.sql;
+        requires org.hibernate.orm.core;
+        requires jakarta.persistence;
 
 
-    opens com.javafx_voltech_cps.cameramonitoringapp to javafx.fxml;
+        opens com.javafx_voltech_cps.cameramonitoringapp to javafx.fxml;
     exports com.javafx_voltech_cps.cameramonitoringapp;
     exports com.javafx_voltech_cps.cameramonitoringapp.controller;
     opens com.javafx_voltech_cps.cameramonitoringapp.controller to javafx.fxml;
