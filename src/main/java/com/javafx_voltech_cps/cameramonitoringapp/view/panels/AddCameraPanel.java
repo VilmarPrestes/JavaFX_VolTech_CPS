@@ -26,7 +26,6 @@ public class AddCameraPanel {
 
     public AddCameraPanel() {
         // Pega a instância do MainController
-        this.mainController = MainWindowPanel.getInstance();
     }
 
     @FXML
@@ -41,7 +40,6 @@ public class AddCameraPanel {
 
         if (!nome.isEmpty() && !ip.isEmpty()) {
             Camera camera = new Camera(0, nome, ip);
-            mainController.addCamera(camera);
             clearFields();
         }
     }
@@ -52,7 +50,6 @@ public class AddCameraPanel {
 
         if (!nome.isEmpty() && !localizacao.isEmpty()) {
             Recorder recorder = new Recorder(0, nome, localizacao);
-            mainController.addRecorder(recorder);
             clearFields();
         }
     }

@@ -10,6 +10,7 @@ import java.util.List;
 
 public class CamDashboard extends AnchorPane {
     private List<Recorder> recorderList;
+
     private HBox hbox;
 
     public CamDashboard() {
@@ -22,7 +23,6 @@ public class CamDashboard extends AnchorPane {
         AnchorPane.setLeftAnchor(hbox, 0.0);
         AnchorPane.setRightAnchor(hbox, 0.0);
 
-        // Ajusta o tamanho dos CamMonitoring quando o tamanho da janela mudar
         widthProperty().addListener((obs, oldWidth, newWidth) -> adjustCamMonitoringSize());
     }
 
