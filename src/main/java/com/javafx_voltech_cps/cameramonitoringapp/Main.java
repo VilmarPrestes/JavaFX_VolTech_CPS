@@ -2,6 +2,7 @@ package com.javafx_voltech_cps.cameramonitoringapp;
 
 import com.javafx_voltech_cps.cameramonitoringapp.model.entity.Camera;
 import com.javafx_voltech_cps.cameramonitoringapp.model.entity.Recorder;
+import com.javafx_voltech_cps.cameramonitoringapp.view.custom_elements.CamDashboard;
 import com.javafx_voltech_cps.cameramonitoringapp.view.custom_elements.CamMonitoring;
 import com.javafx_voltech_cps.cameramonitoringapp.view.custom_elements.CamView;
 import javafx.application.Application;
@@ -17,12 +18,13 @@ public class Main extends Application {
     @Override
     public void start(Stage primaryStage) {
         try {
-            CamMonitoring monitoring = new CamMonitoring();
+            CamDashboard camDashboard = new CamDashboard();
             Recorder record = new Recorder();
             record.getCameras().add(new Camera());
-            monitoring.setRecorder(record);
-            monitoring.start();
-            Scene scene = new Scene(monitoring, 1000, 600);
+            Recorder record2 = new Recorder();
+            camDashboard.addRecorder(record);
+            //camDashboard.addRecorder(record2);
+            Scene scene = new Scene(camDashboard, 1000, 600);
             primaryStage.setTitle("Camera Switching App");
             primaryStage.setScene(scene);
             primaryStage.show();
