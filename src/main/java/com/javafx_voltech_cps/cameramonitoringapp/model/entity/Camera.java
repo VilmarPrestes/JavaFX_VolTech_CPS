@@ -3,18 +3,20 @@ package com.javafx_voltech_cps.cameramonitoringapp.model.entity;
 public class Camera {
 	private int id;
 	private String source;
-	private String nome;
+	private String name;
 	private String ip;
 	private boolean principal;
 
 	// Construtor, getters e setters
 	public Camera(int id, String nome, String ip) {
 		this.id = id;
-		this.nome = nome;
+		this.name = name;
 		this.ip = ip;
 	}
 
-	public Camera(){}
+	public Camera(){
+		this.name = "CAMERA";
+	}
 
 	// Getters e Setters
 	public int getId() {
@@ -25,12 +27,12 @@ public class Camera {
 		this.id = id;
 	}
 
-	public String getNome() {
-		return nome;
+	public String getName() {
+		return name;
 	}
 
-	public void setNome(String nome) {
-		this.nome = nome;
+	public void setName(String name) {
+		this.name = name;
 	}
 
 	public String getIp() {
@@ -38,7 +40,7 @@ public class Camera {
 	}
 
 	public String getSource() {
-		return "rtsp://admin:admin@127.0.0.1:554/live";
+		return "rtsp://admin:FAMILIA19@192.168.0.108:554/cam/realmonitor?channel=1&subtype=0";
 	}
 
 	public void setIp(String ip) {
@@ -50,7 +52,7 @@ public class Camera {
 	}
 
 	public boolean isPrincipal() {
-		return true;
+		return principal;
 	}
 
 	public void setPrincipal(boolean principal) {

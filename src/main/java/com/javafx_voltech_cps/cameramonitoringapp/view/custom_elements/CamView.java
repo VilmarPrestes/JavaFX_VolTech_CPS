@@ -6,8 +6,10 @@ import java.util.concurrent.Future;
 import java.util.concurrent.ScheduledExecutorService;
 import java.util.concurrent.TimeUnit;
 
+import com.javafx_voltech_cps.cameramonitoringapp.view.custom_elements.utils.FrameClock;
 import javafx.application.Platform;
 import org.opencv.core.Mat;
+import org.opencv.core.Size;
 import org.opencv.imgproc.Imgproc;
 import org.opencv.videoio.VideoCapture;
 
@@ -15,7 +17,6 @@ import com.javafx_voltech_cps.cameramonitoringapp.model.entity.Camera;
 
 import javafx.concurrent.Service;
 import javafx.concurrent.Task;
-import javafx.fxml.FXML;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
 import javafx.scene.image.PixelWriter;
@@ -34,27 +35,35 @@ public class CamView extends Service<Void> {
 
     private Camera camera;
     private boolean isOpen;
+    private boolean isShow;
     private int videoState;
     private Image notFoundImage;
     private Image findingVideoImage;
     private Image stopVideoImage;
     private VideoCapture capture;
     private int fps = 30;
+    private final FrameClock timer;
 
-    private ImageView view;
+    private final ImageView view;
+
+
 
     public CamView() {
         isOpen = false;
         view = new ImageView();
+        timer = new FrameClock(fps){
+            @Override
+            public void run(){
+                isShow = true;
+            }
+        };
         videoState = STOP;
         try {
             this.notFoundImage = new Image(Objects.requireNonNull(getClass().getResourceAsStream(NOT_FOUND_VIDEO)));
             this.stopVideoImage = new Image(Objects.requireNonNull(getClass().getResourceAsStream(STOP_VIDEO)));
             this.findingVideoImage = new Image(Objects.requireNonNull(getClass().getResourceAsStream(FINDING_VIDEO)));
-            camera = new Camera();
-            camera.setSource("C:\\Users\\eduar\\OneDrive\\Imagens\\Velkoz.jpeg");
             System.out.println("TESTADO");
-            view.setImage(stopVideoImage);
+            view.setImage(findingVideoImage);
         } catch (Exception e) {
             messageError(e);
         }
@@ -71,6 +80,7 @@ public class CamView extends Service<Void> {
     public void stop() throws Exception {
         if (videoState != STOP || isRunning()) {
             videoState = STOP;
+            timer.shutdown();
             cancel();
             capture.release();
             view.setImage(stopVideoImage);
@@ -79,6 +89,7 @@ public class CamView extends Service<Void> {
 
     public void pause() throws Exception {
         if (videoState != PAUSE) {
+            timer.pause();
             videoState = PAUSE;
         }
     }
@@ -87,6 +98,7 @@ public class CamView extends Service<Void> {
         if (camera != null) {
             if (videoState != PLAY) {
                 videoState = PLAY;
+                timer.start();
                 start();
             }
         } else {
@@ -110,14 +122,13 @@ public class CamView extends Service<Void> {
                             ScheduledExecutorService scheduler = Executors.newSingleThreadScheduledExecutor();
                             scheduler.schedule(() -> {
                                 if (!isOpen) {
-                                    Platform.runLater(() -> view.setImage(findingVideoImage));
+                                    Platform.runLater(() -> view.setImage(notFoundImage));
                                     capture.release();
                                 }
                             }, TIMEOUT_SECONDS, TimeUnit.SECONDS);
                             isOpen = capture.open(camera.getSource());
                             if (isOpen) {
-                                // Primeiramente, cancela qualquer tarefa pendente
-                                if (scheduler != null && !scheduler.isShutdown()) {
+                                if (!scheduler.isShutdown()) {
                                     scheduler.shutdownNow();
                                 }
                                 scheduler = Executors.newSingleThreadScheduledExecutor();
@@ -132,6 +143,7 @@ public class CamView extends Service<Void> {
                                         } else {
                                             timeoutTask.cancel(true);
                                         }
+                                        Thread.sleep(1000/fps);
                                     } else {
                                         scheduler.shutdownNow();
                                     }
@@ -152,14 +164,20 @@ public class CamView extends Service<Void> {
     private boolean loadFrame() throws Exception {
         Mat frame = new Mat();
         if (capture.read(frame)) {
-            if (videoState == PLAY) {
+            if (videoState == PLAY && isShow) {
                 if (frame.empty()) {
                     return false;
                 }
+                int newWidth = 640;
+                int newHeight = 360;
+                Mat resizedFrame = new Mat();
+                Imgproc.resize(frame, resizedFrame, new Size(newWidth, newHeight));
+
                 Mat rgbImage = new Mat();
-                Imgproc.cvtColor(frame, rgbImage, Imgproc.COLOR_BGR2RGB);
+                Imgproc.cvtColor(resizedFrame, rgbImage, Imgproc.COLOR_BGR2RGB);
                 Image image = matToImage(rgbImage);
                 Platform.runLater(() -> view.setImage(image));
+                isShow = false;
             }
             return true;
         }
@@ -207,7 +225,6 @@ public class CamView extends Service<Void> {
         return writableImage;
     }
 
-
     public void messageError(Exception e) {
         e.printStackTrace();
     }
@@ -226,6 +243,7 @@ public class CamView extends Service<Void> {
 
     public void setFps(int fps) {
         this.fps = fps;
+        timer.setFps(this.fps);
     }
 
     public int getVideoState() {

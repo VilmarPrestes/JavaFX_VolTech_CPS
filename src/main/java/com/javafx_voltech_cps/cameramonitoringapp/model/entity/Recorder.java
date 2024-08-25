@@ -7,26 +7,27 @@ import java.util.List;
 
 public class Recorder {
     private int id;
-    private String nome;
+    private String name;
     private String localizacao;
     private List<Camera> cameras;
 
     // Construtor, getters e setters
-    public Recorder(int id, String nome, String localizacao) {
+    public Recorder(int id, String name, String localizacao) {
         this.id = id;
-        this.nome = nome;
+        this.name = name;
         this.localizacao = localizacao;
         cameras = new ArrayList<>();
     }
     public Recorder(){
         cameras = new ArrayList<>();
+        this.name = "GRAVADOR";
     }
 
     // Getters e Setters
     public int getId() { return id; }
     public void setId(int id) { this.id = id; }
-    public String getNome() { return nome; }
-    public void setNome(String nome) { this.nome = nome; }
+    public String getName() { return name; }
+    public void setName(String name) { this.name = name; }
     public String getLocalizacao() { return localizacao; }
     public void setLocalizacao(String localizacao) { this.localizacao = localizacao; }
 
