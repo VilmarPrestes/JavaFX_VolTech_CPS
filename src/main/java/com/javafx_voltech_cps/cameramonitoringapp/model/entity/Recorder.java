@@ -16,7 +16,7 @@ import java.util.List;
 public class Recorder {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Long id;
+    private int id;
 
     @Column(name = "login", nullable = false)
     private String login;
@@ -49,11 +49,12 @@ public class Recorder {
     private List<Camera> cameras;
 
     // Getters and Setters
-    public Long getId() {
+
+    public int getId() {
         return id;
     }
 
-    public void setId(Long id) {
+    public void setId(int id) {
         this.id = id;
     }
 
