@@ -1,43 +1,29 @@
 package com.javafx_voltech_cps.cameramonitoringapp.model.entity;
 
 public class Camera {
-	private int id;
-	private String nome;
-	private String ip;
 
-	// Construtor, getters e setters
-	public Camera(int id, String nome, String ip) {
-		this.id = id;
-		this.nome = nome;
-		this.ip = ip;
-	}
+    public int id;
 
-	// Getters e Setters
-	public int getId() {
-		return id;
-	}
+    public String login;
 
-	public void setId(int id) {
-		this.id = id;
-	}
+    public boolean principal;
 
-	public String getNome() {
-		return nome;
-	}
+    public String password;
 
-	public void setNome(String nome) {
-		this.nome = nome;
-	}
+    public String name;
 
-	public String getIp() {
-		return ip;
-	}
+    public String location;
 
-	public String getSource() {
-		return "source rtsp";
-	}
+    public String host;
 
-	public void setIp(String ip) {
-		this.ip = ip;
-	}
+    public String protocol;
+
+    public String port;
+
+    public int channel;
+
+    public int streaming;
+
+    public int recorderId;
+
 }
