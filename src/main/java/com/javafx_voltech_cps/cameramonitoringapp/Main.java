@@ -5,8 +5,11 @@ import com.javafx_voltech_cps.cameramonitoringapp.model.entity.Recorder;
 import com.javafx_voltech_cps.cameramonitoringapp.view.custom_elements.CamDashboard;
 import com.javafx_voltech_cps.cameramonitoringapp.view.custom_elements.CamMonitoring;
 import com.javafx_voltech_cps.cameramonitoringapp.view.custom_elements.CamView;
+import com.javafx_voltech_cps.cameramonitoringapp.view.custom_elements.RecorderTreeView;
+import com.javafx_voltech_cps.cameramonitoringapp.view.panels.MainWindowPanel;
 import javafx.application.Application;
 import javafx.scene.Scene;
+import javafx.scene.layout.BorderPane;
 import javafx.stage.Stage;
 import org.opencv.core.Core;
 
@@ -18,13 +21,9 @@ public class Main extends Application {
     @Override
     public void start(Stage primaryStage) {
         try {
-            CamDashboard camDashboard = new CamDashboard();
-            Recorder record = new Recorder();
-            record.getCameras().add(new Camera());
-            Recorder record2 = new Recorder();
-            camDashboard.addRecorder(record);
-            //camDashboard.addRecorder(record2);
-            Scene scene = new Scene(camDashboard, 1000, 600);
+
+            MainWindowPanel root = new MainWindowPanel();
+            Scene scene = new Scene(root, 1000, 600);
             primaryStage.setTitle("Camera Switching App");
             primaryStage.setScene(scene);
             primaryStage.show();
