@@ -1,61 +1,141 @@
 package com.javafx_voltech_cps.cameramonitoringapp.model.entity;
 
+import jakarta.persistence.*;
+
+@Entity
+@Table(name = "cameras")
 public class Camera {
-	private int id;
-	private String source;
-	private String name;
-	private String ip;
-	private boolean principal;
+    @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    private int id;
 
-	// Construtor, getters e setters
-	public Camera(int id, String nome, String ip) {
-		this.id = id;
-		this.name = name;
-		this.ip = ip;
-	}
+    @Column(name = "login", nullable = false)
+    private String login;
 
-	public Camera(){
-		this.name = "CAMERA";
-	}
+    @Column(name = "model", nullable = false)
+    private String model;
 
-	// Getters e Setters
-	public int getId() {
-		return id;
-	}
+    @Column(name = "password", nullable = false)
+    private String password;
 
-	public void setId(int id) {
-		this.id = id;
-	}
+    @Column(name = "name", nullable = false)
+    private String name;
 
-	public String getName() {
-		return name;
-	}
+    @Column(name = "location")
+    private String location;
 
-	public void setName(String name) {
-		this.name = name;
-	}
+    @Column(name = "host", nullable = false)
+    private String host;
 
-	public String getIp() {
-		return ip;
-	}
+    @Column(name = "protocol", nullable = false)
+    private String protocol;
 
-	public String getSource() {
-		return "rtsp://admin:FAMILIA19@192.168.0.108:554/cam/realmonitor?channel=1&subtype=0";
-	}
+    @Column(name = "port", nullable = false)
+    private int port;
 
-	public void setIp(String ip) {
-		this.ip = ip;
-	}
+    @Column(name = "streaming", nullable = false)
+    private int streaming;
 
-	public void setSource(String source) {
-		this.source = source;
-	}
+    @Column(name = "principal_cam", nullable = false)
+    private boolean principal;
 
-	public boolean isPrincipal() {
-		return principal;
-	}
+    @ManyToOne
+    @JoinColumn(name = "recorder_id", nullable = false)
+    private Recorder recorder;
 
-	public void setPrincipal(boolean principal) {
-		this.principal = principal;
-	}
+    public int getId() {
+        return id;
+    }
+
+    public void setId(int id) {
+        this.id = id;
+    }
+
+    public String getLogin() {
+        return login;
+    }
+
+    public void setLogin(String login) {
+        this.login = login;
+    }
+
+    public String getModel() {
+        return model;
+    }
+
+    public void setModel(String model) {
+        this.model = model;
+    }
+
+    public String getPassword() {
+        return password;
+    }
+
+    public void setPassword(String password) {
+        this.password = password;
+    }
+
+    public String getName() {
+        return name;
+    }
+
+    public void setName(String name) {
+        this.name = name;
+    }
+
+    public String getLocation() {
+        return location;
+    }
+
+    public void setLocation(String location) {
+        this.location = location;
+    }
+
+    public String getHost() {
+        return host;
+    }
+
+    public void setHost(String host) {
+        this.host = host;
+    }
+
+    public String getProtocol() {
+        return protocol;
+    }
+
+    public void setProtocol(String protocol) {
+        this.protocol = protocol;
+    }
+
+    public int getPort() {
+        return port;
+    }
+
+    public void setPort(int port) {
+        this.port = port;
+    }
+
+    public int getStreaming() {
+        return streaming;
+    }
+
+    public void setStreaming(int streaming) {
+        this.streaming = streaming;
+    }
+
+    public boolean isPrincipal() {
+        return principal;
+    }
+
+    public void setPrincipal(boolean principal) {
+        this.principal = principal;
+    }
+
+    public Recorder getRecorder() {
+        return recorder;
+    }
+
+    public void setRecorder(Recorder recorder) {
+        this.recorder = recorder;
+    }
 }

@@ -6,11 +6,8 @@ import org.hibernate.cfg.Configuration;
 
 public class HibernateTest {
     public static void main(String[] args) {
-        // Configura o Hibernate
         Configuration configuration = new Configuration().configure("hibernate.cfg.xml");
         SessionFactory sessionFactory = configuration.buildSessionFactory();
-
-        // Abre uma sessão
         Session session = null;
         try {
             session = sessionFactory.openSession();
