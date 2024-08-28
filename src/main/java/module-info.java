@@ -2,6 +2,7 @@
     requires javafx.controls;
     requires javafx.fxml;
 	requires java.desktop;
+    requires java.naming;
 	requires opencv;
         requires java.sql;
         requires org.hibernate.orm.core;

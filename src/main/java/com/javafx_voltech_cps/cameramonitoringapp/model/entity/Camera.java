@@ -43,6 +43,12 @@ public class Camera {
     @JoinColumn(name = "recorder_id", nullable = false)
     private Recorder recorder;
 
+    public Camera(){}
+
+    public String getSource(){
+        return "";
+    }
+
     public int getId() {
         return id;
     }
