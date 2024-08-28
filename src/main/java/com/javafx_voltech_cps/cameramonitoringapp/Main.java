@@ -11,7 +11,6 @@ public class Main extends Application {
     @Override
     public void start(Stage primaryStage) {
         try {
-
             MainWindowPanel root = new MainWindowPanel();
             Scene scene = new Scene(root, 1000, 600);
             primaryStage.setTitle("Camera Switching App");
