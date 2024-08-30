@@ -3,13 +3,13 @@ package com.javafx_voltech_cps.cameramonitoringapp.view.forms;
 import javafx.fxml.FXML;
 import javafx.scene.control.TextField;
 
-public class AddCameraForm {
+public class AddRecorderForm {
 
     @FXML
     private TextField txtName;
 
     @FXML
-    private TextField txtPassword;
+    private TextField txtModel;
 
     @FXML
     private TextField txtNumberChannels;
@@ -22,8 +22,8 @@ public class AddCameraForm {
         return txtName;
     }
 
-    public TextField getTxtPassword() {
-        return txtPassword;
+    public TextField getTxtModel() {
+        return txtModel;
     }
 
     public TextField getTxtNumberChannels() {
