@@ -21,6 +21,9 @@ public class Camera {
     @Column(name = "name", nullable = false)
     private String name;
 
+    @Column(name = "channel")
+    private int channel;
+
     @Column(name = "location")
     private String location;
 
@@ -46,7 +49,7 @@ public class Camera {
     public Camera(){}
 
     public String getSource(){
-        return "";
+        return protocol+"://"+login+":"+password+"@"+host+":"+port+"/cam/realmonitor?channel="+channel+"&subtype="+streaming;
     }
 
     public int getId() {
@@ -71,6 +74,14 @@ public class Camera {
 
     public void setModel(String model) {
         this.model = model;
+    }
+
+    public int getChannel() {
+        return channel;
+    }
+
+    public void setChannel(int channel) {
+        this.channel = channel;
     }
 
     public String getPassword() {

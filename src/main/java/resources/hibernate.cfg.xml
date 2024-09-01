@@ -27,7 +27,7 @@
         <property name="hibernate.hbm2ddl.auto">update</property>
 
         <!-- Mapeamento das classes -->
-        <mapping class="model.entity.Camera"/>
-        <mapping class="model.entity.Recorder"/>
+        <mapping class="com.javafx_voltech_cps.cameramonitoringapp.model.entity.Camera"/>
+        <mapping class="com.javafx_voltech_cps.cameramonitoringapp.model.entity.Recorder"/>
     </session-factory>
 </hibernate-configuration>

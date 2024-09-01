@@ -5,26 +5,34 @@ import org.hibernate.SessionFactory;
 import org.hibernate.cfg.Configuration;
 
 public class Database {
-    private static SessionFactory sessionFactory;
+    private SessionFactory sessionFactory;
+    private Session session;
 
-    public static void initialize() {
+    public void initialize() {
         try {
             sessionFactory = new Configuration().configure("hibernate.cfg.xml").buildSessionFactory();
+            session = sessionFactory.openSession();
         } catch (Throwable ex) {
             throw new ExceptionInInitializerError(ex);
         }
     }
 
-    public static Session getSession() {
-        if (sessionFactory == null) {
+    public Session getConnection() {
+        if (sessionFactory == null || session == null) {
+            sessionFactory = null;
+            session = null;
             initialize();
         }
-        return sessionFactory.openSession();
+        return session;
     }
 
-    public static void close() {
-        if (sessionFactory != null) {
+    public void close() {
+        if (sessionFactory != null || session != null) {
+            assert sessionFactory != null;
             sessionFactory.close();
+            session.close();
+            sessionFactory = null;
+            session = null;
         }
     }
 }
